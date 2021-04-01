@@ -13,7 +13,6 @@
 #include "kolua.h"
 
 int server;
-int clients[maxPlayers];
 int playersCounter = 0;
 pthread_t accept_thread;
 pthread_t clients_rw[maxPlayers];
@@ -42,7 +41,8 @@ struct sockaddr_in server_addr;
 }*/
 
 int start(int port){
-    server = socket(AF_INET, SOCK_STREAM, 0);
+    init_lua();
+    server = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
     server_addr.sin_addr.s_addr = inet_addr("0.0.0.0");
@@ -58,46 +58,62 @@ int start(int port){
         return -1;
     }
 
-    pid_t* forks = malloc(sizeof(pid_t)*maxPlayers);
+    printf("Allocating memory...\n");
+    //pid_t* forks = malloc(sizeof(pid_t)*maxPlayers);
+    clients = malloc(sizeof(int)*maxPlayers);
     while (1){
         int addrlen = sizeof(server_addr);
-        printf("accepting next player...\n");
-        int client = accept(server, (struct sockaddr*)&server_addr, (socklen_t*)&addrlen);
-        if (client < 0){
-            printf("Accept error: %d\n", errno);
-            continue;
+        clients[playersCounter] = accept(server, (struct sockaddr*)&server_addr, (socklen_t*)&addrlen);
+        if (clients[playersCounter] < 0){
+            
         }
+        playersCounter++;
         /*if (pthread_create(clients_rw, NULL, read_write_client, (void*)&client) != 0){
             printf("Can't create thread\n");
         }*/
-        forks[playersCounter] = fork();
-        if (forks[playersCounter] < 0){
-            printf("Fork failed\n");
-            return -1;
-        }
-        else if (forks[playersCounter] == 0){
-            printf("Reading and writing new client...\n");
-            char* buf = malloc(sizeof(char)*MSG_SIZE);
+        for (int i = 0; i < playersCounter; i++){
+            int client = clients[i];
+            char* buf = malloc(MSG_SIZE);
             memset(buf, '\0', MSG_SIZE);
-            while(1){
-                int size = 0;
-                if (read(client, buf, MSG_SIZE) > 0){
-                    char* result = exec_lua_file(buf);
-                    printf("%s\n", buf);
-                    printf("Writing...\n");
-                    if (write(client, result, MSG_SIZE) < 0){
-                        printf("No write\n");
-                        return -1;
+            int size = 0;
+            if (read(client, buf, MSG_SIZE) > 0){
+                printf("Message accepted\n");
+                char* dir = malloc(MSG_SIZE + sizeof("scripts/"));
+                strcpy(dir, "scripts/");
+                int args_start = 0;
+                char* args = malloc(MSG_SIZE);
+                printf("Getting args");
+                int args_start_pos = 0;
+                char* file_name = malloc(MSG_SIZE);
+                for (int i = 0; i < MSG_SIZE; i++){
+                    if (buf[i] == ' '){
+                        args_start = 1;
+                        args_start_pos = i;
                     }
-                    buf = memset(buf, 0, MSG_SIZE);
+                    if (args_start == 0){
+                        file_name[i] = buf[i];
+                    }
+                    if (args_start == 1){
+                        args[i - args_start_pos] = buf[i];
+                    }
                 }
-                if (size == -1){
-                    printf("Reading failed\n");
+                strcat(dir, file_name);
+                printf("Loading lua: %s\n", dir);
+                 char* result = exec_lua_file(dir, args);
+                printf("%s\n", buf);
+                printf("Writing...\n");
+                if (write(client, result, MSG_SIZE) < 0){
+                    printf("No write\n");
                     return -1;
                 }
+                buf = memset(buf, 0, MSG_SIZE);
             }
+            if (size == -1){
+                printf("Reading failed\n");
+                close(client);
+            }
+            sleep(0.10);
         }
-        playersCounter++;
     }
     return 0;
 }

@@ -13,6 +13,7 @@
 
 int client;
 char* buf;
+pthread_t chat;
 int start_client(const char* ip, int port){
 	client = socket(AF_INET, SOCK_STREAM, 0);
 	struct sockaddr_in server_addr;
@@ -24,6 +25,7 @@ int start_client(const char* ip, int port){
 		flush();
 		return -1;
 	}
+	pthread_create(chat, NULL, read_chat, NULL);
 	return 0;
 }
 
@@ -45,4 +47,14 @@ void send_data(char* message){
 	logko(buf);
 	logko("\n");
 	flush();
+}
+
+void read_chat(){
+	char* msg_buf;
+	while (1){
+		if (read(client, msg_buf, MSG_SIZE) < 0){
+
+		}
+		logko(msg_buf);
+	}
 }
