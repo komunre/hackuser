@@ -1,0 +1,5 @@
+log.txt
+*.o
+client/hackuser
+server/hackuser-server
+server/libs
