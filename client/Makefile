@@ -1,5 +1,5 @@
 OBJECTS = src/main.o src/logging.o src/client.o src/buffers.o
-FLAGS = -lpthread -lnanomsg -lncurses -Wall -Wextra -pedantic -g
+FLAGS = -lpthread-lncurses -Wall -Wextra -pedantic -g
 BINARY = hackuser
 
 build: $(OBJECTS)

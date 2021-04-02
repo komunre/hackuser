@@ -1,5 +1,5 @@
 OBJECTS = src/main.o src/server.o src/kolua.o src/lua_funcs.o
-FLAGS = -lpthread -lnanomsg -Wall -Wextra -pedantic -g -llua -ldl -lm -I/usr/local/include/ -L/usr/local/lib 
+FLAGS = -lpthread -Wall -Wextra -pedantic -g -llua -ldl -lm -I/usr/local/include/ -L/usr/local/lib 
 BINARY = hackuser-server
 
 build: $(OBJECTS)
