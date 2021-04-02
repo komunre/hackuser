@@ -13,9 +13,9 @@
 #include <errno.h>
 
 void sendMessage(lua_State* L){
-    char* msg = lua_tostring(L, 0);
-    for (int i = 0; i < maxPlayers; i++){
-        printf("Sending message to %d\n", clients[i]);
+    const char* msg = lua_tostring(L, 1);
+    printf("%s\n", msg);
+    for (int i = 0; i < playersCounter; i++){
         write(clients[i], msg, MSG_SIZE);
     }
 }

@@ -3,17 +3,11 @@
 #include <stdlib.h>
 #include "logging.h"
 #include "client.h"
+#include "buffers.h"
 
-int cols = 50;
+cols = 50;
 int lineRow = 10;
 
-void printBuffer(char* buffer){
-	for (int y = 0; y < 9; y++){
-		for (int i = 0; i < cols; i++){
-			mvaddch(y, i, buffer[y*cols+i]);
-		}
-	}
-}
 
 void printDesign(char* str){
 	mvaddstr(lineRow, 0, "============");
@@ -28,27 +22,27 @@ int main(const int argc, const char **argv){
 	if (start_client(argv[1], port) < 0){
 		return -1;
 	}
-	send_data("Hello!");
 	initscr();
 	raw();
 	cbreak();
 	noecho();
+
+	buffer = malloc(9 * cols * sizeof(char));
 	
 	clear();
 	
 	mvaddstr(2, 4, "Hello, ncurses!");
 	
 	
-	char* buffer = malloc(9 * cols * sizeof(char));
 	char* str = malloc(cols * sizeof(char));
-	int counter = 0;
+	counter = 0;
 	int strCounter = 0;
 	
 	logko("Entering loop...\n");
 	while (1){
 		raw();
 		clear();
-		printBuffer(buffer);
+		printBuffer();
 		printDesign(str);
 		char ch = getch();
 		if (ch == '~'){
