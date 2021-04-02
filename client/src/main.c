@@ -6,7 +6,6 @@
 #include "buffers.h"
 
 cols = 50;
-int lineRow = 10;
 
 
 void printDesign(char* str){
@@ -27,7 +26,7 @@ int main(const int argc, const char **argv){
 	cbreak();
 	noecho();
 
-	buffer = malloc(9 * cols * sizeof(char));
+	buffer = malloc((lineRow - 1) * cols * sizeof(char));
 	
 	clear();
 	

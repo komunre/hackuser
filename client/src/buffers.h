@@ -4,6 +4,7 @@
 char* buffer;
 int counter;
 int cols;
+int lineRow;
 
 void printBuffer();
 

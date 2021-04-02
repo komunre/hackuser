@@ -104,7 +104,7 @@ int start(int port){
                 int args_start_pos = 0;
                 char* file_name = malloc(MSG_SIZE);
                 for (int i = 0; i < MSG_SIZE; i++){
-                    if (buf[i] == ' '){
+                    if (buf[i] == ' ' && args_start == 0){
                         args_start = 1;
                         args_start_pos = i;
                     }
