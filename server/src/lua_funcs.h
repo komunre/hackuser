@@ -8,5 +8,7 @@
 #include <stdlib.h>
 
 void sendMessage(lua_State* L);
+int transfer(lua_State* L);
+int split(lua_State* L);
 
 #endif

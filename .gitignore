@@ -5,3 +5,4 @@ server/hackuser-server
 server/libs
 client/core
 server/core
+*.rdb

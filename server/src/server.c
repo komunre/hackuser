@@ -13,6 +13,7 @@
 #include "kolua.h"
 #include <poll.h>
 #include <signal.h>
+#include "db.h"
 
 int server;
 pthread_t accept_thread;
@@ -46,6 +47,7 @@ struct sockaddr_in server_addr;
 int start(int port){
     playersCounter = 0;
     init_lua();
+    connect_redis("127.0.0.1", 6379);
     server = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);

@@ -14,6 +14,7 @@ void init_lua(){
     luaL_openlibs(L);
 
     lua_register(L, "send_msg", sendMessage);
+    lua_register(L, "transfer", transfer);
 }
 
 char* exec_lua_file(char* file, char* args){

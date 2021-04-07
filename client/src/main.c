@@ -26,14 +26,14 @@ int main(const int argc, const char **argv){
 	cbreak();
 	noecho();
 
-	buffer = malloc((lineRow - 1) * cols * sizeof(char));
+	buffer = malloc((lineRow - 1) * cols);
 	
 	clear();
 	
 	mvaddstr(2, 4, "Hello, ncurses!");
 	
 	
-	char* str = malloc(cols * sizeof(char));
+	char* str = malloc(cols);
 	counter = 0;
 	int strCounter = 0;
 	
@@ -54,8 +54,11 @@ int main(const int argc, const char **argv){
 				mvaddch(counter, i, str[i]);
 			}
 			counter++;
+			if (counter >= lineRow){
+				counter = lineRow - 1;
+			}
 			send_data(str);
-			str = malloc(cols*sizeof(char));
+			str = malloc(cols);
 			strCounter = 0;
 		}
 		else if (ch == '\\'){
