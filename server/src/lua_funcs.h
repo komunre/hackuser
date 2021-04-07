@@ -10,5 +10,8 @@
 void sendMessage(lua_State* L);
 int transfer(lua_State* L);
 int split(lua_State* L);
+int create_account(lua_State* L);
+int access_db(lua_State* L);
+int access_db_set(lua_State* L);
 
 #endif

@@ -50,15 +50,47 @@ int transfer(lua_State* L){
     return 1;
 }
 
+int create_account(lua_State* L){
+    char* name = lua_tostring(L, 1);
+    char* pass = lua_tostring(L, 2);
+    if (name == NULL || pass == NULL){
+        lua_pushstring(L, "Please enter account name");
+        return 1;
+    }
+    reply = redisCommand(rcontext, "GET %s.%s", name, "money");
+    if (reply->str != NULL){
+        lua_pushstring(L, "Account already exists");
+        return 1;
+    }
+    redisCommand(rcontext, "SET %s.%s %d", name, "money", 0);
+    redisCommand(rcontext, "SET %s.%s %s", name, "password", pass);
+    lua_pushstring(L, "Success!");
+    return 1;
+}
+
 int access_db(lua_State* L){
     char* level1 = lua_tostring(L, 1);
     char* db = lua_tostring(L, 2);
     char* key = lua_tostring(L, 3);
     if (level1 == NULL || db == NULL || key == NULL){
-        return "NULL";
+        lua_pushstring(L, "NULL");
+        return 1;
     }
     reply = redisCommand(rcontext, "GET %s.%s.%s", level1, db, key);
     lua_pushstring(L, reply->str);
     freeReplyObject(reply);
     return 1;
+}
+
+int access_db_set(lua_State* L){
+    char* level1 = lua_tostring(L, 1);
+    char* db = lua_tostring(L, 2);
+    char* key = lua_tostring(L, 3);
+    char* value = lua_tostring(L, 4);
+    if (level1 == NULL || db == NULL || key == NULL){
+        lua_pushstring(L, "ERR");
+        return 1;
+    }
+    redisCommand(rcontext, "SET %s.%s.%s %s", level1, db, key, value);
+    return 0;
 }

@@ -15,6 +15,8 @@ void init_lua(){
 
     lua_register(L, "send_msg", sendMessage);
     lua_register(L, "transfer", transfer);
+    lua_register(L, "create_acc", create_account);
+    lua_register(L, "db_get", access_db);
 }
 
 char* exec_lua_file(char* file, char* args){
