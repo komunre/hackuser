@@ -43,10 +43,22 @@ int transfer(lua_State* L){
     }
     freeReplyObject(reply);
     reply = redisCommand(rcontext, "GET %s.%s", sender, "money");
+    if (reply->str == NULL){
+        lua_pushstring(L, "Wrong sender account");
+        return 1;
+    }
     sscanf(reply->str, "%d", &money);
     freeReplyObject(reply);
+    if (money-amount < 0){
+        lua_pushstring(L, "Not enough money");
+        return 1;
+    }
     redisCommand(rcontext, "SET %s.%s %d", sender, "money", money-amount);
     reply = redisCommand(rcontext, "GET %s.%s", receiver, "money");
+    if (reply->str == NULL){
+        lua_pushstring(L, "Wrong receiver account");
+        return 1;
+    }
     sscanf(reply->str, "%d", &money);
     freeReplyObject(reply);
     redisCommand(rcontext, "SET %s.%s %d", receiver, "money", money+amount);

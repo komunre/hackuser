@@ -17,6 +17,7 @@ void init_lua(){
     lua_register(L, "transfer", transfer);
     lua_register(L, "create_acc", create_account);
     lua_register(L, "db_get", access_db);
+    lua_register(L, "db_set", access_db_set);
 }
 
 char* exec_lua_file(char* file, char* args){

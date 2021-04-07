@@ -63,7 +63,7 @@ int main(const int argc, const char **argv){
 		}
 		else if (ch == '\\'){
 			strCounter--;
-			str[strCounter] = '^';
+			str[strCounter] = '\0';
 		}
 		else{
 			str[strCounter] = ch;
