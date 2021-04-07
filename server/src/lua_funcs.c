@@ -31,6 +31,10 @@ int transfer(lua_State* L){
     char* receiver = lua_tostring(L, 2);
     int amount = lua_tointeger(L, 3);
     char* pass = lua_tostring(L, 4);
+    if (sender == NULL || receiver == NULL || amount == NULL || pass == NULL){
+        lua_pushstring(L, "Not enough arguments");
+        return 1;
+    }
     printf("%s:%s:%d:%s\n", sender, receiver, amount, pass);
     reply = redisCommand(rcontext, "GET %s.%s", sender, "password");
     if (strcmp(pass, reply->str) != 0){
